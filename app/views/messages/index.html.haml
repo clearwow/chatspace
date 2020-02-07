@@ -1,6 +1,6 @@
 .wrapper
-  =render 'shared/side_bar'
-  
+  = render 'shared/side_bar'
+
   .chat
     .header
       .left-header
@@ -14,22 +14,26 @@
         .right-header__button
           Edit
 
-    .messages
-      .message
-        .upper-message
-          .upper-message__user-name
-            メンバー
-          .upper-message__date
-            20XX/X/X
-        .lower-meesage
-          .lower-message__content
-            メッセージ
+.messages 
+  = render @messages
+
+.message
+  .upper-message
+    .upper-message__user-name
+      = message.user.name
+    .upper-message__date
+      = message.created_at.strftime("%Y年%m月%d日 %H時%M分")
+  .lower-message
+    - if message.content.present?
+      %p.lower-message__content
+        = message.content
+    = image_tag message.image.url, class: 'lower-message__image' if message.image.present?
 
     .form
-      %form
-        %input.form__message
+      = form_for [@group, @message] do |f|
+        = f.text_field :content, class: 'form__message', placeholder: 'type a message'
         .form__mask
-          %label.form__mask__image
-            = icon('fa','image',class: 'icon')
-            %input.hidden{type: 'file'}
-        %input.form__submit{type: 'submit', value: 'Send'}
+          = f.label :image, class: 'form__mask__image' do
+            = icon('fas', 'image', class: 'icon')
+            = f.file_field :image, class: 'hidden'
+        = f.submit 'Send', class: 'form__submit'
